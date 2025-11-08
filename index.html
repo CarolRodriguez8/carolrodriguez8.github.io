@@ -147,21 +147,37 @@
 <p>&copy; 2025 Carolina Rodríguez | Portfolio DAM</p>
 </footer>
 
-<!-- Script de fondo de nodos ajustado -->
 <script>
+// Fade-in scroll
+const faders = document.querySelectorAll('.fade-in');
+const appearOptions = { threshold: 0.2, rootMargin: "0px 0px -50px 0px" };
+const appearOnScroll = new IntersectionObserver(function(entries, observer){
+    entries.forEach(entry => {
+        if(!entry.isIntersecting) return;
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+    });
+}, appearOptions);
+faders.forEach(fader => appearOnScroll.observe(fader));
+
+// Timeline fade-in
+const timelineItems = document.querySelectorAll('.timeline-item');
+timelineItems.forEach(item => appearOnScroll.observe(item));
+
+// Network background with mouse interaction
 const canvas = document.getElementById('network-bg');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let nodes = [];
-const NODE_COUNT = 50; // menos nodos para fondo más sutil
+const NODE_COUNT = 80;
 for(let i=0;i<NODE_COUNT;i++){
     nodes.push({
         x: Math.random()*canvas.width,
         y: Math.random()*canvas.height,
-        vx: (Math.random()-0.5)*0.3,
-        vy: (Math.random()-0.5)*0.3
+        vx: (Math.random()-0.5)*0.5,
+        vy: (Math.random()-0.5)*0.5
     });
 }
 
@@ -173,7 +189,7 @@ function drawNetwork(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     nodes.forEach(node=>{
         ctx.beginPath();
-        ctx.arc(node.x,node.y,1.5,0,Math.PI*2);
+        ctx.arc(node.x,node.y,2,0,Math.PI*2);
         ctx.fillStyle="#3b82f6";
         ctx.fill();
     });
@@ -182,21 +198,22 @@ function drawNetwork(){
             const dx=nodes[i].x-nodes[j].x;
             const dy=nodes[i].y-nodes[j].y;
             const dist=Math.sqrt(dx*dx+dy*dy);
-            if(dist<100){
-                ctx.strokeStyle="rgba(59,130,246,"+(1-dist/100)+")";
+            if(dist<120){
+                ctx.strokeStyle="rgba(59,130,246,"+(1-dist/120)+")";
                 ctx.lineWidth=1;
                 ctx.beginPath();
-                ctx.moveTo(nodes[i].x,node[i].y);
+                ctx.moveTo(nodes[i].x,nodes[i].y);
                 ctx.lineTo(nodes[j].x,nodes[j].y);
                 ctx.stroke();
             }
         }
+        // Draw line to mouse
         if(mouse.x && mouse.y){
             const dxm = nodes[i].x - mouse.x;
             const dym = nodes[i].y - mouse.y;
             const distm = Math.sqrt(dxm*dxm + dym*dym);
-            if(distm<120){
-                ctx.strokeStyle="rgba(59,130,246,"+(1-distm/120)+")";
+            if(distm<150){
+                ctx.strokeStyle="rgba(59,130,246,"+(1-distm/150)+")";
                 ctx.beginPath();
                 ctx.moveTo(nodes[i].x,nodes[i].y);
                 ctx.lineTo(mouse.x, mouse.y);
@@ -217,22 +234,6 @@ window.addEventListener('resize', ()=>{
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
-
-// Fade-in scroll
-const faders = document.querySelectorAll('.fade-in');
-const appearOptions = { threshold: 0.2, rootMargin: "0px 0px -50px 0px" };
-const appearOnScroll = new IntersectionObserver(function(entries, observer){
-    entries.forEach(entry => {
-        if(!entry.isIntersecting) return;
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-    });
-}, appearOptions);
-faders.forEach(fader => appearOnScroll.observe(fader));
-
-// Timeline fade-in
-const timelineItems = document.querySelectorAll('.timeline-item');
-timelineItems.forEach(item => appearOnScroll.observe(item));
 </script>
 
 </body>
